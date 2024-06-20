@@ -1,84 +1,160 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-# Modèle utilisateur personnalisé (Mentor et Mentee)
-class User(AbstractUser):
-    """
-    Modèle utilisateur personnalisé (Mentor et Mentee).
-    Attributs supplémentaires :
-    - is_mentor : booléen indiquant si l'utilisateur est un mentor.
-    - is_mentee : booléen indiquant si l'utilisateur est un mentee.
-    - age : âge de l'utilisateur.
-    - location : emplacement géographique de l'utilisateur.
-    - domain_of_interest : domaine d'intérêt de l'utilisateur.
-    - level_of_education : niveau d'éducation de l'utilisateur.
-    - bio : biographie de l'utilisateur.
-    """
-    is_mentor = models.BooleanField(default=False)  # Indique si l'utilisateur est un mentor
-    is_mentee = models.BooleanField(default=False)  # Indique si l'utilisateur est un mentee
-    age = models.IntegerField(null=True, blank=True)  # Âge de l'utilisateur
-    location = models.CharField(max_length=100, null=True, blank=True)  # Emplacement géographique de l'utilisateur
-    domain_of_interest = models.CharField(max_length=100, null=True, blank=True)  # Domaine d'intérêt de l'utilisateur
-    level_of_education = models.CharField(max_length=100, null=True, blank=True)  # Niveau d'éducation de l'utilisateur
-    bio = models.TextField(null=True, blank=True)  # Biographie de l'utilisateur
+class DomaineExpertise(models.Model):
+    name = models.CharField(max_length=100)
 
-    def __str__(self):
-        return self.username
+class Qualification(models.Model):
+    name = models.CharField(max_length=100)
 
-# Modèle pour représenter une relation de mentorat
-class Mentorship(models.Model):
-    """
-    Modèle pour représenter une relation de mentorat.
-    Attributs :
-    - mentor : référence au mentor.
-    - mentee : référence au mentee.
-    - start_date : date de début de la relation de mentorat.
-    - end_date : date de fin de la relation de mentorat (si applicable).
-    - feedback : feedback sur la relation de mentorat.
-    """
-    mentor = models.ForeignKey(User, related_name='mentorships_as_mentor', on_delete=models.CASCADE)  # Référence au mentor
-    mentee = models.ForeignKey(User, related_name='mentorships_as_mentee', on_delete=models.CASCADE)  # Référence au mentee
-    start_date = models.DateField(auto_now_add=True)  # Date de début de la relation de mentorat
-    end_date = models.DateField(null=True, blank=True)  # Date de fin de la relation de mentorat (si applicable)
-    feedback = models.TextField(null=True, blank=True)  # Feedback sur la relation de mentorat
+class Experience(models.Model):
+    years = models.IntegerField()
 
-    def __str__(self):
-        return f'{self.mentor.username} mentors {self.mentee.username}'
+class Preference(models.Model):
+    name = models.CharField(max_length=100)
 
-# Modèle pour les sessions de mentorat
-class MentorshipSession(models.Model):
-    """
-    Modèle pour les sessions de mentorat.
-    Attributs :
-    - mentorship : référence à la relation de mentorat.
-    - scheduled_date : date et heure de la session de mentorat.
-    - duration : durée de la session (ex. 1 heure).
-    - session_type : type de session (individuelle, groupe, webinaire).
-    - notes : notes prises pendant la session.
-    """
-    mentorship = models.ForeignKey(Mentorship, related_name='sessions', on_delete=models.CASCADE)  # Référence à la relation de mentorat
-    scheduled_date = models.DateTimeField()  # Date et heure de la session de mentorat
-    duration = models.DurationField()  # Durée de la session (ex. 1 heure)
-    session_type = models.CharField(max_length=50)  # Type de session (individuelle, groupe, webinaire)
-    notes = models.TextField(null=True, blank=True)  # Notes prises pendant la session
+class Langue(models.Model):
+    name = models.CharField(max_length=100)
 
-    def __str__(self):
-        return f'Session on {self.scheduled_date} for {self.mentorship}'
+class Disponibilite(models.Model):
+    day = models.CharField(max_length=10)  # e.g., 'Monday'
+    start_time = models.TimeField()        # e.g., '09:00'
+    end_time = models.TimeField()          # e.g., '17:00'
 
-# Modèle pour les ressources d’apprentissage
-class LearningResource(models.Model):
+class NiveauEducation(models.Model):
+    level = models.CharField(max_length=100)  # e.g., 'Bachelor', 'Master', etc.
+class Utilisateur(AbstractUser):
     """
-    Modèle pour les ressources d’apprentissage.
-    Attributs :
-    - title : titre de la ressource.
-    - description : description de la ressource.
-    - resource_type : type de ressource (article, vidéo, cours).
-    - url : URL de la ressource.
+    Ce modèle étend AbstractUser pour inclure des fonctionnalités utilisateur de base.
+    Les utilisateurs peuvent s'inscrire et se connecter via des méthodes dédiées.
     """
-    title = models.CharField(max_length=200)  # Titre de la ressource
-    description = models.TextField()  # Description de la ressource
-    resource_type = models.CharField(max_length=50)  # Type de ressource (article, vidéo, cours)
+    is_mentor = models.BooleanField(default=False)
+    is_mentee = models.BooleanField(default=False)
+
+class Mentor(models.Model):
+    """
+    Ce modèle représente un mentor et étend les informations de base de l'utilisateur.
+    Il inclut des domaines d'expertise, des qualifications, de l'expérience, des préférences,
+    des langues parlées et des disponibilités.
+    """
+    utilisateur = models.OneToOneField(Utilisateur, on_delete=models.CASCADE)  # Référence au modèle Utilisateur
+    domaines_expertise = models.ManyToManyField(DomaineExpertise)
+    qualifications = models.ManyToManyField(Qualification)
+    experiences = models.ManyToManyField(Experience)
+    preferences = models.ManyToManyField(Preference)
+    langues = models.ManyToManyField(Langue)
+    disponibilite = models.ManyToManyField(Disponibilite)
+
+    def proposerSession(self):
+        """
+        Méthode pour que le mentor propose une session de mentorat.
+        """
+        pass  # Logique pour proposer une session
+
+    def partagerRessource(self):
+        """
+        Méthode pour que le mentor partage une ressource.
+        """
+        pass  # Logique pour partager une ressource
+
+class Mentee(models.Model):
+    """
+    Ce modèle représente un mentee et étend les informations de base de l'utilisateur.
+    Il inclut des centres d'intérêt, des objectifs, le niveau d'éducation, les compétences actuelles,
+    les langues parlées et les disponibilités.
+    """
+    utilisateur = models.OneToOneField(Utilisateur, on_delete=models.CASCADE)  # Référence au modèle Utilisateur
+    centres_interet = models.ManyToManyField(DomaineExpertise, related_name='centres_interet_mentees')
+    objectifs = models.ManyToManyField(DomaineExpertise,related_name='objectifs_mentees')
+    niveau_education = models.ManyToManyField(NiveauEducation)
+    competences_actuelles = models.ManyToManyField(Qualification)
+    langues = models.ManyToManyField(Langue)
+    disponibilite = models.ManyToManyField(Disponibilite)
+
+    def rechercherMentor(self):
+        """
+        Méthode pour que le mentee recherche un mentor.
+        """
+        pass  # Logique pour rechercher un mentor
+
+    def evaluerMentor(self):
+        """
+        Méthode pour que le mentee évalue un mentor.
+        """
+        pass  # Logique pour évaluer un mentor
+
+class Connexion(models.Model):
+    mentor = models.ForeignKey(Mentor, on_delete=models.CASCADE)  # Référence au mentor de la session
+    mentee = models.ForeignKey(Mentee, on_delete=models.CASCADE)  # Référence au mentee de la session
+    score = models.FloatField()
+class Session(models.Model):
+    """
+    Ce modèle représente une session de mentorat entre un mentor et un mentee.
+    Il inclut la date, l'heure de début, l'heure de fin et le type de session.
+    """
+    mentor = models.ForeignKey(Mentor, on_delete=models.CASCADE)  # Référence au mentor de la session
+    mentee = models.ForeignKey(Mentee, on_delete=models.CASCADE)  # Référence au mentee de la session
+    disponibilite = models.ForeignKey(Disponibilite, on_delete=models.CASCADE)  # Référence au mentee de la session
+    type = models.CharField(max_length=255)  # Type de session
+    commentaire = models.CharField(max_length=255)
+
+    def planifier(self):
+        """
+        Méthode pour planifier une session de mentorat.
+        """
+        pass  # Logique pour planifier une session
+
+    def annuler(self):
+        """
+        Méthode pour annuler une session de mentorat.
+        """
+        pass  # Logique pour annuler une session
+
+class Ressource(models.Model):
+    """
+    Ce modèle représente une ressource partagée par un mentor.
+    Il inclut le titre, le type, l'URL et le domaine de la ressource.
+    """
+    titre = models.CharField(max_length=255)  # Titre de la ressource
+    type = models.CharField(max_length=255)  # Type de ressource (article, vidéo, etc.)
     url = models.URLField()  # URL de la ressource
+    domaine = models.ForeignKey(DomaineExpertise, on_delete=models.CASCADE, related_name='ressources')  # Domaine de la ressource
+    mentor = models.ForeignKey(Mentor, on_delete=models.CASCADE, related_name='ressources')  # Référence au mentor qui partage la ressource
+    mentee = models.ForeignKey(Mentee, on_delete=models.CASCADE, related_name='ressources')  # Référence au mentor qui partage la ressource
 
-    def __str__(self):
-        return self.title
+    def ajouterRessource(self):
+        """
+        Méthode pour ajouter une ressource.
+        """
+        pass  # Logique pour ajouter une ressource
+
+    def consulterRessource(self):
+        """
+        Méthode pour consulter une ressource.
+        """
+        pass  # Logique pour consulter une ressource
+
+class Evaluation(models.Model):
+    """
+    Ce modèle représente une évaluation donnée par un mentee à un mentor.
+    Il inclut la note, le commentaire et la date de l'évaluation.
+    """
+    mentor = models.ForeignKey(Mentor, on_delete=models.CASCADE)  # Référence au mentor évalué
+    mentee = models.ForeignKey(Mentee, on_delete=models.CASCADE)  # Référence au mentee qui donne l'évaluation
+    note = models.IntegerField()  # Note de l'évaluation
+    commentaire = models.TextField()  # Commentaire de l'évaluation
+    date = models.DateField()  # Date de l'évaluation
+
+    def donnerFeedback(self):
+        """
+        Méthode pour donner un feedback au mentor.
+        """
+        pass  # Logique pour donner un feedback
+
+    def consulterFeedback(self):
+        """
+        Méthode pour consulter un feedback donné.
+        """
+        pass  # Logique pour consulter un feedback
+
+

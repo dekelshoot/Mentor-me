@@ -1,0 +1,15 @@
+.container {
+  max-width: 960px;
+}
+
+.selected {
+  background-color: #0d6efd;
+  color: white;
+
+}
+
+.chec {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
