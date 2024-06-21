@@ -21,6 +21,7 @@ import { RessourceMenteeComponent } from './components/dashboard-mentee/ressourc
 import { EvaluationMenteeComponent } from './components/dashboard-mentee/evaluation-mentee/evaluation-mentee.component';
 import { EvaluationMentorComponent } from './components/dashboard-mentor/evaluation-mentor/evaluation-mentor.component';
 import { StatMenteeComponent } from './layouts/stat-mentee/stat-mentee.component';
+import { AboutComponent } from './components/about/about.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { StatMenteeComponent } from './layouts/stat-mentee/stat-mentee.component
     RessourceMenteeComponent,
     EvaluationMenteeComponent,
     EvaluationMentorComponent,
-    StatMenteeComponent
+    StatMenteeComponent,
+    AboutComponent
   ],
   imports: [
     BrowserModule,

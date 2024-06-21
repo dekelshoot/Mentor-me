@@ -39,7 +39,11 @@
             développer leurs compétences et atteindre leurs objectifs.
           </p>
           <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-            <button class="btn btn-outline-secondary" type="button">
+            <button
+              (click)="start()"
+              class="btn btn-outline-secondary"
+              type="button"
+            >
               Commencer
             </button>
           </div>
@@ -60,12 +64,17 @@
         </p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
           <button
+            (click)="routerService.routeRoute('/auth/sign-up')"
             type="button"
             class="btn btn-outline-secondary btn-lg px-4 me-sm-3"
           >
             Inscrivez vous
           </button>
-          <button type="button" class="btn btn-outline-secondary btn-lg px-4">
+          <button
+            (click)="start()"
+            type="button"
+            class="btn btn-outline-secondary btn-lg px-4"
+          >
             Commencer
           </button>
         </div>
@@ -111,7 +120,9 @@
               objectifs de développement personnel et professionnel.
             </li>
           </ul>
-          <button class="btn btn-outline-light" type="button">Commencer</button>
+          <button (click)="start()" class="btn btn-outline-light" type="button">
+            Commencer
+          </button>
         </div>
       </div>
       <div class="col-md-6">
@@ -140,7 +151,11 @@
               protégées et votre confidentialité est garantie.
             </li>
           </ul>
-          <button class="btn btn-outline-secondary" type="button">
+          <button
+            (click)="start()"
+            class="btn btn-outline-secondary"
+            type="button"
+          >
             Commencer
           </button>
         </div>
@@ -158,6 +173,7 @@
         </p>
 
         <button
+          (click)="routerService.routeRoute('/auth/sign-up')"
           class="btn btn-outline-secondary mr-5"
           style="margin: 10px"
           type="button"
@@ -165,7 +181,11 @@
           Inscrivez-vous Maintenant
         </button>
 
-        <button class="btn btn-outline-secondary" type="button">
+        <button
+          (click)="start()"
+          class="btn btn-outline-secondary"
+          type="button"
+        >
           Commencer
         </button>
       </div>

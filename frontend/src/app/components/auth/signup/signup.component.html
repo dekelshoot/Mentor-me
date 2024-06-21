@@ -53,11 +53,10 @@
           </li>
         </ul>
 
-        <p class="mb-1">Vous avez un compte?</p>
-        <ul class="list-inline">
-          <li class="list-inline-item"><a href="#">se connecter</a></li>
-          <li class="list-inline-item"><a href="#"> </a></li>
-        </ul>
+        <p class="mb-1">Vous n'avez pas de compte?</p>
+        <a (click)="routerService.routeRoute('/auth/sign-in')"
+          >se créer un compte</a
+        >
       </div>
 
       <div class="col-md-7 col-lg-8" *ngIf="this.role == 1">

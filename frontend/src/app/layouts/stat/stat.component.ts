@@ -11,6 +11,7 @@ export class StatComponent implements OnInit {
 
   loading = true
   sessions: Array<any> = []
+  evaluations: Array<any> = []
   ressources: Array<any> = []
   mentees: Array<any> = []
   constructor(public requestService: RequestService, private routerService: RouterService) { }
@@ -49,7 +50,17 @@ export class StatComponent implements OnInit {
                 this.requestService.post("http://127.0.0.1:8000/api/connexion/", data).then(
                   (res: any) => {
                     this.mentees = res.data
-                    this.loading = false;
+                    let data = {
+                      "action": 8,
+                      "mentor": user.id
+                    };
+                    this.requestService.post("http://127.0.0.1:8000/api/evaluation/", data).then(
+                      (res: any) => {
+                        console.log(res)
+                        this.evaluations = res
+                        this.loading = false;
+                      }
+                    )
                   }
                 )
               }

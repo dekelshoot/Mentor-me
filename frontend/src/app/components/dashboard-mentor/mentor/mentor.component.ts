@@ -8,7 +8,7 @@ import { RequestService } from 'src/app/services/request.service';
   styleUrls: ['./mentor.component.scss']
 })
 export class MentorComponent implements OnInit {
-  active = 3
+  active = 1
   loading = true
   constructor(private routerService: RouterService) { }
   ngOnInit(): void {
@@ -27,5 +27,9 @@ export class MentorComponent implements OnInit {
     this.active = active;
   }
 
+  logout() {
+    this.routerService.routeRoute('/auth/sign-in');
+    localStorage.removeItem('user')
+  }
 
 }

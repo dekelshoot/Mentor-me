@@ -146,6 +146,8 @@ class LoginView(APIView):
             if user.is_mentor:
                 mentor = Mentor.objects.get(utilisateur=user)
                 data = {
+                    "is_mentee":False,
+                "is_mentor":True,
                     "id":mentor.id,
             'username': mentor.utilisateur.username,
             'email': mentor.utilisateur.email,
@@ -166,6 +168,8 @@ class LoginView(APIView):
                 mentee = Mentee.objects.get(utilisateur=user)
                 data = {
                     "id":mentee.id,
+                "is_mentee":True,
+                "is_mentor":False,
                 'username': mentee.utilisateur.username,
                 'email': mentee.utilisateur.email,
                 'first_name': mentee.utilisateur.first_name,
@@ -298,10 +302,52 @@ class RessourceViewSet(APIView):
                 datas.append(dat)
             return Response(datas, status=status.HTTP_200_OK)
 
-class EvaluationViewSet(viewsets.ModelViewSet):
+class EvaluationViewSet(APIView):
     """
     ViewSet pour gérer les opérations CRUD sur le modèle Evaluation.
     """
-    queryset = Evaluation.objects.all()
-    serializer_class = EvaluationSerializer
-    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        data = request.data
+        if data["action"]==7:
+            
+            mentee = Mentee.objects.get(id=data['mentee'])
+            mentor = Connexion.objects.get(mentee=mentee).mentor
+
+            evaluation = Evaluation.objects.create(mentor=mentor, mentee=mentee, note= data['note'],commentaire = data['commentaire'],date=data['date'])
+            datas={
+                "mentor":evaluation.mentor.utilisateur.first_name+" "+evaluation.mentor.utilisateur.last_name, 
+                "mentee":evaluation.mentee.utilisateur.first_name+" "+evaluation.mentee.utilisateur.last_name,
+                'commentaire': evaluation.commentaire,
+                'note': evaluation.note,
+                'date': evaluation.date,
+            }
+            return Response({"data":datas}, status=status.HTTP_200_OK)
+        if data["action"]==8:
+            mentor = Mentor.objects.get(id=data['mentor'])
+            evaluations = Evaluation.objects.filter(mentor=mentor)
+            datas =[]
+            for evaluation in evaluations:
+                dat = {
+                "mentor":evaluation.mentor.utilisateur.first_name+" "+evaluation.mentor.utilisateur.last_name, 
+                "mentee":evaluation.mentee.utilisateur.first_name+" "+evaluation.mentee.utilisateur.last_name,
+                'commentaire': evaluation.commentaire,
+                'note': evaluation.note,
+                'date': evaluation.date,
+                }
+                datas.append(dat)
+            return Response(datas, status=status.HTTP_200_OK)
+        
+        if data["action"]==9:
+            mentee = Mentee.objects.get(id=data['mentee'])
+            evaluations = Evaluation.objects.filter(mentee=mentee)
+            datas =[]
+            for evaluation in evaluations:
+                dat = {
+                "mentor":evaluation.mentor.utilisateur.first_name+" "+evaluation.mentor.utilisateur.last_name, 
+                "mentee":evaluation.mentee.utilisateur.first_name+" "+evaluation.mentee.utilisateur.last_name,
+                'commentaire': evaluation.commentaire,
+                'note': evaluation.note,
+                'date': evaluation.date,
+                }
+                datas.append(dat)
+            return Response(datas, status=status.HTTP_200_OK)

@@ -15,7 +15,7 @@ export class SigninComponent {
   success = false;
   err = false;
   constructor(private requestService: RequestService,
-    private formBuilder: FormBuilder, private routerService: RouterService
+    private formBuilder: FormBuilder, public routerService: RouterService
   ) { }
   ngOnInit(): void {
     this.initForm();

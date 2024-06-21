@@ -25,4 +25,9 @@ export class MenteeComponent implements OnInit {
   changeActive(active: number) {
     this.active = active;
   }
+
+  logout() {
+    this.routerService.routeRoute('/auth/sign-in');
+    localStorage.removeItem('user')
+  }
 }

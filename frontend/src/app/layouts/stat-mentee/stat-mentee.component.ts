@@ -12,6 +12,7 @@ export class StatMenteeComponent implements OnInit {
   loading = true
   sessions: Array<any> = []
   ressources: Array<any> = []
+  evaluations: Array<any> = []
   mentor!: any
   constructor(public requestService: RequestService, private routerService: RouterService) { }
 
@@ -50,7 +51,17 @@ export class StatMenteeComponent implements OnInit {
                   (res: any) => {
                     this.mentor = res.data
                     console.log(this.mentor)
-                    this.loading = false;
+                    let data = {
+                      "action": 9,
+                      "mentee": user.id
+                    };
+                    this.requestService.post("http://127.0.0.1:8000/api/evaluation/", data).then(
+                      (res: any) => {
+                        console.log(res)
+                        this.evaluations = res
+                        this.loading = false;
+                      }
+                    )
                   }
                 )
               }

@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from api.views import LoginView,ConnexionViewSet,SessionViewSet,RessourceViewSet
+from api.views import LoginView,ConnexionViewSet,SessionViewSet,RessourceViewSet,EvaluationViewSet
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,4 +26,5 @@ urlpatterns = [
     path('api/connexion/', ConnexionViewSet.as_view(), name='connexion'),
     path('api/sessions/', SessionViewSet.as_view(), name='sessions'),
     path('api/ressources/', RessourceViewSet.as_view(), name='ressources'),
+    path('api/evaluation/', EvaluationViewSet.as_view(), name='evaluation'),
 ]

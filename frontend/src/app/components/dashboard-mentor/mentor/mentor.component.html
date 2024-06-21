@@ -7,15 +7,6 @@
       href="/"
       class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
     >
-      <svg class="bi pe-none me-2" width="40" height="32">
-        <use xlink:href="#bootstrap" />
-      </svg>
-      <img
-        src="../../../assets/logo.png"
-        class="bi pe-none me-2"
-        width="40"
-        height="32"
-      />
       <span class="fs-4">Mentor dashboard</span>
     </a>
     <hr />
@@ -75,14 +66,10 @@
           height="32"
           class="rounded-circle me-2"
         />
-        <strong>mdo</strong>
+        <strong>moi</strong>
       </a>
       <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-        <li><a class="dropdown-item" href="#">New project...</a></li>
-        <li><a class="dropdown-item" href="#">Settings</a></li>
-        <li><a class="dropdown-item" href="#">Profile</a></li>
-        <li><hr class="dropdown-divider" /></li>
-        <li><a class="dropdown-item" href="#">Sign out</a></li>
+        <li><a class="dropdown-item" (click)="logout()">Sign out</a></li>
       </ul>
     </div>
   </div>
@@ -101,5 +88,12 @@
 
   <div class="content" *ngIf="active == 3">
     <app-ressource class="session" style="width: 100%"></app-ressource>
+  </div>
+
+  <div class="content" *ngIf="active == 4">
+    <app-evaluation-mentor
+      class="session"
+      style="width: 100%"
+    ></app-evaluation-mentor>
   </div>
 </main>
