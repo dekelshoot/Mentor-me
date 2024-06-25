@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Utilisateur, Mentor, Mentee, Session, Ressource, Evaluation,DomaineExpertise, Qualification, Experience, Preference, Langue, Disponibilite, NiveauEducation,Connexion
 from django.contrib.auth import authenticate
+from api.matchin_service import Matching_service
 
 
 class ConnexionSerializer(serializers.ModelSerializer):
@@ -361,6 +362,12 @@ class MenteeRegistrationSerializer(serializers.Serializer):
         mentee.competences_actuelles.set(validated_data['competences_actuelles']),
         mentee.langues.set(validated_data['langues']),
         mentee.disponibilite.set(validated_data['disponibilite'])
+
+        matching_service = Matching_service()
+        matches = matching_service.match_mentor_to_mentee(mentee)
+        mentor = matches["mentor"]
+        connexion =Connexion.objects.create(mentor=mentor,mentee=mentee,score=matches["similarity"])
+        connexion
 
         return {
                 'username': user.username,

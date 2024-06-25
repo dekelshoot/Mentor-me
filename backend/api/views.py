@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from .models import Utilisateur, Mentor, Mentee, Session, Ressource, Evaluation
 from .serializers import UtilisateurSerializer, MentorSerializer, MenteeSerializer, SessionSerializer, RessourceSerializer, EvaluationSerializer
@@ -19,6 +20,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import LoginSerializer
 from django.shortcuts import get_object_or_404
+from api.matchin_service import Matching_service
 class DomaineExpertiseViewSet(viewsets.ModelViewSet):
     queryset = DomaineExpertise.objects.all()
     serializer_class = DomaineExpertiseSerializer
@@ -111,6 +113,37 @@ class UtilisateurViewSet(viewsets.ModelViewSet):
     serializer_class = UtilisateurSerializer
     # permission_classes = [IsAuthenticated]
 
+@api_view(['GET'])
+def match_mentor_to_mentee(request):
+    mentors = Mentor.objects.all()
+    mentee = Mentee.objects.get(id =2)
+    matches = {}
+    matching_service = Matching_service()
+    best_match = None
+    best_similarity = -1
+
+    for mentor in mentors:
+        
+        similarity = matching_service.calculate_similarity(mentor, mentee)
+        print(similarity)
+        # Trouver le meilleur match pour ce mentee
+        if similarity > best_similarity:
+            best_similarity = similarity
+            best_match = mentor
+            matches={
+                'mentor_id': best_match.id,
+                'mentee_id': mentee.id,
+                'similarity': best_similarity
+            }
+    
+    return Response(matches)
+class MatchinView(APIView):
+    def get(self, request, *args, **kwargs):
+        mentors= Mentor.objects.all()
+        mentee = Mentee.objects.get(id =1)
+        matching_service = Matching_service()
+        print(matching_service.calculate_similarity(mentor,mentee))
+        return Response({"data":matching_service}, status=status.HTTP_200_OK)
 class ConnexionViewSet(APIView):
     def post(self, request):
         id = request.data["id"]

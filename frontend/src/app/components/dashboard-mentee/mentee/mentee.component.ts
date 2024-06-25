@@ -14,7 +14,7 @@ export class MenteeComponent implements OnInit {
     const userString = localStorage.getItem('user');
     if (userString !== null) {
       const user = JSON.parse(userString);
-      if (user.is_mentee) {
+      if (user.is_mentor) {
         this.routerService.routeRoute('/auth/sign-in');
       }
     } else {
